@@ -1,0 +1,5 @@
+[user]
+	name = Taylor Dunn
+	email = t.dunn19@gmail.com
+[credential]
+	helper = osxkeychain
