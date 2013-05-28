@@ -1,5 +1,5 @@
+" call pathogen#runtime_append_all_bundles()
 call pathogen#infect()
-call pathogen#helptags()
 
 " makes searches case sensitive
 set ignorecase smartcase
