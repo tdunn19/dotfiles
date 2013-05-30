@@ -19,6 +19,7 @@ alias ll="ls -lG"
 export LSCOLORS="ExGxBxDxCxEgEdxbxgxcxd"
 alias work="cd ~/Documents/workspace"
 alias nfiles="ls -1 | wc -l"
+alias dot="cd ~/.dotfiles"
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
@@ -42,4 +43,14 @@ plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
 
-# Customize to your needs...
+# Fixed a problem with tmux window renaming, see:
+# http://superuser.com/questions/306028/tmux-and-zsh-custom-prompt-bug-with-window-name
+DISABLE_AUTO_TITLE=true
+
+# Installing python
+# http://docs.python-guide.org/en/latest/starting/install/osx.html
+export PATH=/usr/local/bin:$PATH
+
+# Powerline Zsh
+# . {repository_root}/powerline/bindings/zsh/powerline.zsh
+
