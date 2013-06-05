@@ -16,7 +16,6 @@ python powerline_setup()
 python del powerline_setup
 filetype off
 
-
 " makes searches case sensitive
 set ignorecase smartcase
 " highlights current line
@@ -55,3 +54,5 @@ set splitright
 " map <Right> <Nop>
 " map <Up> <Nop>
 " map <Down> <Nop>
+vmap <C-c> y:call system("pbcopy", getreg("\""))<CR>
+nmap <C-v> :call setreg("\"",system("pbpaste"))<CR>p
