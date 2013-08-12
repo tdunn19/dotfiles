@@ -20,7 +20,10 @@ export LSCOLORS="ExGxBxDxCxEgEdxbxgxcxd"
 alias work="cd ~/Documents/workspace"
 alias nfiles="ls -1 | wc -l"
 alias dot="cd ~/.dotfiles"
-
+alias dl="cd ~/Downloads"
+alias dropbox="cd ~/Documents/Dropbox"
+alias reload=". ~/.zshrc"
+alias mybook="cd /Volumes/My\ Book"
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
 
