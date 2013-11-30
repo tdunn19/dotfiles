@@ -17,10 +17,12 @@ alias glooscap="ssh tdunn@glooscap.ace-net.ca"
 alias mkdir="mkdir -p"
 alias ll="ls -lG"
 export LSCOLORS="ExGxBxDxCxEgEdxbxgxcxd"
-alias work="cd ~/Documents/workspace"
+alias work="cd ~/workspace"
+alias music="cd ~/Music/iTunes/iTunes\ Media/Music"
 alias nfiles="ls -1 | wc -l"
 alias dot="cd ~/.dotfiles"
 alias dl="cd ~/Downloads"
+alias docs="cd ~/Documents"
 alias dropbox="cd ~/Documents/Dropbox"
 alias reload=". ~/.zshrc"
 alias mybook="cd /Volumes/My\ Book"
@@ -56,4 +58,20 @@ export PATH=/usr/local/bin:$PATH
 
 # Powerline Zsh
 # . {repository_root}/powerline/bindings/zsh/powerline.zsh
+
+function toBrasdor() {
+  scp -r $1 tdunn@brasdor.ace-net.ca:~/$2
+}
+
+function fromBrasdor() {
+  scp -r tdunn@brasdor.ace-net.ca:~/$1 $2
+}
+
+function toGlooscap() {
+  scp -r $1 tdunn@glooscap.ace-net.ca:~/$2
+}
+
+function fromGlooscap() {
+  scp -r tdunn@glooscap.ace-net.ca:~/$1 $2
+}
 

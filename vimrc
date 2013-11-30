@@ -25,11 +25,21 @@ syntax on
 " autload indent files, to automatically do language-dependent indenting
 filetype plugin indent on
 set laststatus=2
+" inserts spaces when hitting tab
 set expandtab
-set tabstop=4
-set shiftwidth=4
+" lines longer than 79 columns will be broken
+set textwidth=79
+" a hard tab displays as 4 columns
+set tabstop=2
+set shiftwidth=2
+" insert/delete 4 spaces when hitting tab/backspace. used to =2
 set softtabstop=2
-set backspace=indent,eol,start " backspace over everything in insert mode
+" round indent to multipe of 'shiftwidth'
+set shiftround
+" align the new line indent with the previous line
+set autoindent
+" backspace over everything in insert mode
+set backspace=indent,eol,start
 " show matching brace
 set showmatch
 " show cursor position at all times
