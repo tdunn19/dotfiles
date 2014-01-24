@@ -59,6 +59,10 @@ export PATH=/usr/local/bin:$PATH
 # Powerline Zsh
 # . {repository_root}/powerline/bindings/zsh/powerline.zsh
 
+function nlines() {
+  cat $1 | wc -l
+}
+
 function toBrasdor() {
   scp -r $1 tdunn@brasdor.ace-net.ca:~/$2
 }
@@ -73,5 +77,21 @@ function toGlooscap() {
 
 function fromGlooscap() {
   scp -r tdunn@glooscap.ace-net.ca:~/$1 $2
+}
+
+function toFundy() {
+  scp -r $1 tdunn@fundy.ace-net.ca:~/$2
+}
+
+function fromFundy() {
+  scp -r tdunn@fundy.ace-net.ca:~/$1 $2
+}
+
+function toPlacentia() {
+  scp -r $1 tdunn@placentia.ace-net.ca:~/$2
+}
+
+function fromPlacentia() {
+  scp -r tdunn@placentia.ace-net.ca:~/$1 $2
 }
 

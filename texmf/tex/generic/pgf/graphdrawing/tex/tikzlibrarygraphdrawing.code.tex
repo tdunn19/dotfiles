@@ -1,0 +1,233 @@
+% Copyright 2010 by Renée Ahrens, Olof Frahm, Jens Kluttig, Matthias Schulz, Stephan Schuster
+%
+% This file may be distributed and/or modified
+%
+% 1. under the LaTeX Project Public License and/or
+% 2. under the GNU Public License.
+%
+% See the file doc/generic/pgf/licenses/LICENSE for more details.
+
+\ProvidesFileRCS[v\pgfversion] $Header: /cvsroot/pgf/pgf/generic/pgf/graphdrawing/tex/tikzlibrarygraphdrawing.code.tex,v 1.12 2012/09/27 11:45:22 tantau Exp $
+
+\usepgflibrary{graphdrawing}
+
+\def\tikz@lib@ensure@gd@loaded{}
+
+
+% Patch the level and sibling distances so that gd and plain tikz are
+% in sync
+\tikzset{level distance=1cm, sibling distance=1cm}
+
+
+
+%
+% Setup graph drawing for tikz
+% 
+
+\def\tikz@gd@request@callback#1#2{%
+  \tikzset{
+    execute at begin scope={
+      \tikzset{ 
+        --/.style={arrows=-},
+      }   
+      \pgfgdsetedgecallback{\pgfgdtikzedgecallback}%
+      % 
+      % Setup for plain syntax
+      % 
+      \pgfgdaddspecificationhook{\tikz@lib@gd@spec@hook}%
+      #1
+      \let\tikzgdeventcallback\pgfgdevent%
+      \let\tikzgdeventgroupcallback\pgfgdeventgroup%
+      \let\tikzgdlatenodeoptionacallback\pgfgdsetlatenodeoption%
+    },
+    execute at end scope={#2}
+  }%
+}
+
+\pgfgdsetrequestcallback\tikz@gd@request@callback
+
+
+
+\pgfgdappendtoforwardinglist{/tikz/,/tikz/graphs/}
+
+\def\tikz@lib@gd@spec@hook{%
+  \tikzset{
+    edge macro=\tikz@gd@plain@edge@macro,
+    /tikz/at/.style={/graph drawing/desired at={##1}},
+    % 
+    % Setup for the tree syntax (do this late so that grow options
+    % are still valid after a layout has been chosen)
+    % 
+    /tikz/growth function=\relax,
+    /tikz/edge from parent macro=\tikz@gd@edge@from@parent@macro,
+    % 
+    % Setup for the graphs syntax 
+    % 
+    /tikz/graphs/new ->/.code n args={4}{\pgfgdedge{##1}{##2}{->}{/tikz,##3}{##4}},
+    /tikz/graphs/new <-/.code n args={4}{\pgfgdedge{##1}{##2}{<-}{/tikz,##3}{##4}},
+    /tikz/graphs/new --/.code n args={4}{\pgfgdedge{##1}{##2}{--}{/tikz,##3}{##4}},
+    /tikz/graphs/new <->/.code n args={4}{\pgfgdedge{##1}{##2}{<->}{/tikz,##3}{##4}},
+    /tikz/graphs/new -!-/.code n args={4}{\pgfgdedge{##1}{##2}{-!-}{/tikz,##3}{##4}},
+    /tikz/graphs/placement/compute position/.code=,%
+  }
+}
+
+\pgfgdaddprepareedgehook{
+  \tikz@enable@edge@quotes%
+  \let\tikz@transform=\pgfutil@empty%
+  \let\tikz@options=\pgfutil@empty%
+  \let\tikz@tonodes=\pgfutil@empty%
+}
+
+
+\def\pgfgdtikzedgecallback#1#2#3#4#5#6#7{%
+  \draw[edge macro=]
+    (#1\tikzparentanchor)
+    edge[to path={#7 -- (\tikztotarget) \tikztonodes},#3,#4,/graph drawing/.cd,#6]
+    #5
+    (#2\tikzchildanchor);%
+}
+
+\def\tikz@gd@edge@from@parent@macro#1#2{
+  [/utils/exec=\pgfgdedge{\tikzparentnode}{\tikzchildnode}{--}{/tikz,#1}{#2}]
+}
+
+\def\tikz@gd@plain@edge@macro#1#2{
+  \pgfgdedge{\tikztostart}{\tikztotarget}{--}{/tikz,#1}{#2}
+}
+
+
+
+% 
+% Conversions: Convert coordinates into pairs of values surrounded by
+% braces. 
+%
+
+\pgfgdset{
+  conversions/coordinate/.code={%
+    \tikz@scan@one@point\pgf@process#1%
+    \pgfmathsetmacro{\tikz@gd@temp@x}{\pgf@x}
+    \pgfmathsetmacro{\tikz@gd@temp@y}{\pgf@y}
+    \edef\pgfgdresult{{\tikz@gd@temp@x,\tikz@gd@temp@y}}
+  }
+}
+
+
+
+%
+% Overwrite node callback
+%
+
+\def\pgfgdgeneratenodecallback#1#2#3#4{%
+  {\node[every generated node/.try,name={#1},shape={#2},/graph drawing/.cd,#3]{#4};}%
+}
+
+
+% 
+% Subgraph handling 
+%
+
+\pgfgdset{start subgraph node/.style={/tikz/.cd,every subgraph node/.try,@subgraph styling}}
+\tikzset{
+  @subgraph styling/.style=,
+  subgraph nodes/.style={/tikz/@subgraph styling/.append style={,#1}},
+  graphs/subgraph nodes/.style={/tikz/subgraph nodes={#1}},
+}
+
+
+% "General" text placement for subgraph nodes that works with all node
+% kinds.
+
+\tikzset{
+  subgraph text above inside/.code=\tikz@lg@simple@contents@top{#1},%
+  subgraph text above inside/.default=text ragged,
+  subgraph text below inside/.code=\tikz@lg@simple@contents@bottom{#1},%
+  subgraph text below inside/.default=text ragged,
+  subgraph text sep/.initial=.1em,
+  subgraph text none/.code={
+    \def\pgfgdsubgraphnodecontents{%
+      \hbox to \pgfkeysvalueof{/graph drawing/subgraph bounding box width}{%
+        \vrule width0pt height\pgfkeysvalueof{/graph drawing/subgraph bounding box height}\hfil}%
+    }%
+    \tikzset{anchor=center}
+  },
+  @subgraph text label or pin/.code 2 args={
+    \pgfkeysgetvalue{/graph drawing/subgraph text}\pgf@temp%
+    \tikzset{subgraph text none}%
+    \def\pgf@tempa{#1:}%
+    \expandafter\expandafter\expandafter\def\expandafter\expandafter\expandafter\pgf@tempa\expandafter\expandafter\expandafter{\expandafter\expandafter\expandafter{\expandafter\pgf@tempa\pgf@temp}}%
+    \tikzset{#2/.expand once=\pgf@tempa}%
+  },%
+  subgraph text label/.style={@subgraph text label or pin={#1}{label}},
+  subgraph text label/.default=\tikz@label@default@pos,
+  subgraph text pin/.style={@subgraph text label or pin={#1}{pin}},
+  subgraph text pin/.default=\tikz@pin@default@pos,
+}
+
+\def\tikz@lg@simple@contents@top#1{%
+  \tikzset{anchor=base}%
+  \def\pgfgdsubgraphnodecontents{%
+    \vbox{%
+      \pgfkeysgetvalue{/graph drawing/subgraph text}\pgf@temp%
+      \ifx\pgf@temp\pgfutil@empty%
+      \else%
+        \ifx\pgf@temp\pgfutil@sptoken%
+        \else%
+            \hbox to \pgfkeysvalueof{/graph drawing/subgraph bounding box width}{%
+              \hsize=\pgfkeysvalueof{/graph drawing/subgraph bounding box width}\relax%
+              \vbox{\noindent\strut\tikzset{#1}\tikz@text@action\pgf@temp}%
+            }%
+        \fi%
+      \fi%
+      \pgfmathparse{\pgfkeysvalueof{/tikz/subgraph text sep}}%
+      \kern\pgfmathresult pt\relax%  
+      \pgf@y=\pgfkeysvalueof{/graph drawing/subgraph bounding box height}\relax%
+      \hbox to \pgfkeysvalueof{/graph drawing/subgraph bounding box width}{%
+      \vrule width0pt height.5\pgf@y depth.5\pgf@y\hfil}%
+    }%
+  }%
+}
+
+\def\tikz@lg@simple@contents@bottom#1{%
+  \tikzset{anchor=base}%
+  \def\pgfgdsubgraphnodecontents{%
+    {%
+      \pgf@y=\pgfkeysvalueof{/graph drawing/subgraph bounding box height}\relax%
+      \setbox0=\vbox{%
+        \hbox to \pgfkeysvalueof{/graph drawing/subgraph bounding box width}{\vrule width0pt height\pgf@y\hfil}%
+        \pgfmathparse{\pgfkeysvalueof{/tikz/subgraph text sep}}%
+        \kern\pgfmathresult pt\relax%  
+        \pgfkeysgetvalue{/graph drawing/subgraph text}\pgf@temp%
+        \ifx\pgf@temp\pgfutil@empty%
+        \else%
+          \ifx\pgf@temp\pgfutil@sptoken%
+          \else%
+            \hbox to \pgfkeysvalueof{/graph drawing/subgraph bounding box width}{%
+              \hsize=\pgfkeysvalueof{/graph drawing/subgraph bounding box width}\relax%
+              \vbox{\noindent\strut\tikzset{#1}\tikz@text@action\pgf@temp}%
+            }%
+          \fi%
+        \fi%
+      }%
+      \pgf@ya=\ht0\relax%
+      \advance\pgf@ya by-.5\pgf@y\relax%
+      \ht0=.5\pgf@y\relax%
+      \dp0=\pgf@ya\relax%
+      \box0\relax%
+    }%
+  }%
+}
+
+\tikzset{every subgraph node/.style=subgraph text above inside}
+
+%
+% Simple shorthand
+%
+
+\tikzset{
+  layout/.style={/graph drawing/request scope and layout,/graph drawing/algorithm={#1}},
+  graphs/layout/.style={/tikz/layout={#1}},
+}
+
+
+\endinput

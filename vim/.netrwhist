@@ -1,7 +1,9 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =5
+let g:netrw_dirhist_cnt =7
 let g:netrw_dirhist_1='/Users/taylor/.vimbackup'
 let g:netrw_dirhist_2='/Users/taylor/.dotfiles'
 let g:netrw_dirhist_3='/Users/taylor/workspace/dpd/src/sim'
 let g:netrw_dirhist_4='/Users/taylor/.dotfiles'
 let g:netrw_dirhist_5='/Users/taylor/.dotfiles/texmf'
+let g:netrw_dirhist_6='/Users/taylor/workspace/dpd/data/exp5/g100.0/n29-2'
+let g:netrw_dirhist_7='/Volumes/My Book/workspace/dpd_mc/data/exp1/n29d3c15t20/PQ'
