@@ -14,6 +14,7 @@ alias brasdor="ssh tdunn@brasdor.ace-net.ca"
 alias fundy="ssh tdunn@fundy.ace-net.ca"
 alias placentia="ssh tdunn@placentia.ace-net.ca"
 alias glooscap="ssh tdunn@glooscap.ace-net.ca"
+alias localcluster="ssh wscott@137.149.72.199"
 alias mkdir="mkdir -p"
 alias ll="ls -lG"
 export LSCOLORS="ExGxBxDxCxEgEdxbxgxcxd"
@@ -26,6 +27,7 @@ alias docs="cd ~/Documents"
 alias dropbox="cd ~/Documents/Dropbox"
 alias reload=". ~/.zshrc"
 alias mybook="cd /Volumes/My\ Book"
+alias xmg="xmgrace -log xy -type xydy"
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
 
@@ -61,6 +63,15 @@ export PATH=/usr/local/bin:$PATH
 
 function nlines() {
   cat $1 | wc -l
+}
+
+function toLocal() {
+  #scp -r $1 tdunn@137.149.72.199:~/$2
+  scp -r $1 wscott@137.149.72.199:~/$2
+}
+
+function fromLocal() {
+  scp -r wscott@137.149.72.199:~/$1 $2
 }
 
 function toBrasdor() {
